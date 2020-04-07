@@ -1,7 +1,5 @@
 package com.example.demo;
 
-
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cloud.stream.messaging.Processor;
@@ -10,29 +8,29 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.MimeTypeUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.PostPersist;
+import javax.persistence.*;
 
 @Entity
-public class Product {
+@Table(name="ORDER_TABLE")
+public class Order {
     @Id @GeneratedValue
     Long id;
-    String name;
-    int stock;
 
+    int qty;
+    Long productId;
+    String productName;
     @PostPersist
     public void eventPublish(){
-        ProductChanged productChanged = new ProductChanged();
-        productChanged.setProductId(this.getId());
-        productChanged.setProductName(this.getName());
-        productChanged.setProductStock(this.getStock());
+        OrderPlaced orderPlaced = new OrderPlaced();
+        orderPlaced.setOrderId(this.getId());
+        orderPlaced.setProductId(this.getProductId());
+        orderPlaced.setProductName(this.getProductName());
+        orderPlaced.setQty(this.getQty());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = null;
 
         try {
-            json = objectMapper.writeValueAsString(productChanged);
+            json = objectMapper.writeValueAsString(orderPlaced);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON format exception", e);
         }
@@ -44,27 +42,35 @@ public class Product {
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
                 .build());
     }
-    public Long getId() {
+    public void setId(Long id){
+        this.id=id;
+
+    }
+    public Long getId(){
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public int getQty() {
+        return qty;
     }
 
-    public String getName() {
-        return name;
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Long getProductId() {
+        return productId;
     }
 
-    public int getStock() {
-        return stock;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }
