@@ -6,7 +6,9 @@ public class OrderPlaced {
     Long productId;
     int qty;
     String productName;
-
+    public OrderPlaced(){
+        this.eventType = this.getClass().getSimpleName();
+    }
     public String getEventType() {
         return eventType;
     }

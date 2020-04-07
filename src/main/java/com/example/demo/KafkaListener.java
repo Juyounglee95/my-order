@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class KafkaListener {
     @StreamListener(Processor.INPUT)
-    public void onEventByString(@Payload String productChanged){
-        System.out.println(productChanged);
+    public void onEventByString(@Payload String orderPlaced){
+        System.out.println(orderPlaced);
     }
 
 

@@ -15,7 +15,6 @@ import javax.persistence.*;
 public class Order {
     @Id @GeneratedValue
     Long id;
-
     int qty;
     Long productId;
     String productName;
